@@ -62,11 +62,6 @@ public class DisplayDataChannel {
     }
 
     static func detectI2CChipAddress(service: io_object_t) -> UInt32 {
-        print("Detecting I2C chip address for service \(service)")
-        var parent = io_registry_entry_t();
-        if IORegistryEntryGetParentEntry(service, kIOServicePlane, &parent) == KERN_SUCCESS {
-            print("Parent entry found: \(parent)")
-        }
         return 0x37 // Default I2C chip address
     }
 
@@ -119,7 +114,6 @@ public class DisplayDataChannel {
         if err != 0 { throw IOError(message: "I2C Write Failed", rawValue: err) }
     }
 
-    // MARK: Capabilities
     public func getRawCapabilities() async throws -> String {
         var buffer: [UInt8] = [];
         while buffer.count < 512 {
@@ -130,5 +124,12 @@ public class DisplayDataChannel {
             buffer += packet.data[5..<(5 + length)]
         }
         return String(decoding: buffer, as: UTF8.self)
+    }
+
+    public func setVcp(code: UInt8, value: UInt16) async throws {
+        try await i2cWrite(packet: Packet(addr: 0x51, data: [0x03, code, UInt8(value >> 8), UInt8(value & 0xff)], addChecksum: true))
+    }
+    public func setVcp(feature: VCPFeature, value: UInt16) async throws {
+        try await setVcp(code: feature.code, value: value)
     }
 }

@@ -1,6 +1,15 @@
 {
-  "originHash" : "9893864e9bb71c7408508d7a0332ce3a969fa24a16cff6630144413bdc96f902",
+  "originHash" : "99ea7f089c2afea6fd9f21b3ce2d55fe7a0cc838003b65504fe3b5716c3d315e",
   "pins" : [
+    {
+      "identity" : "staticmemberiterable",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/FullQueueDeveloper/StaticMemberIterable.git",
+      "state" : {
+        "revision" : "3018283901822043de8d4cd4e3025de1782bf7e5",
+        "version" : "1.0.0"
+      }
+    },
     {
       "identity" : "swift-argument-parser",
       "kind" : "remoteSourceControl",
@@ -8,6 +17,15 @@
       "state" : {
         "revision" : "626b5b7b2f45e1b0b1c6f4a309296d1d21d7311b",
         "version" : "1.7.1"
+      }
+    },
+    {
+      "identity" : "swift-syntax",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-syntax.git",
+      "state" : {
+        "revision" : "64889f0c732f210a935a0ad7cda38f77f876262d",
+        "version" : "509.1.1"
       }
     }
   ],

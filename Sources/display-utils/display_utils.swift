@@ -13,7 +13,7 @@ struct CommandLineError: Error, CustomStringConvertible {
 }
 
 struct DisplaySelectorOption: ParsableArguments {
-    @Option(name: [.customShort("d"), .customLong("display")],  help: "Chooses which display to control")
+    @Option(name: [.customShort("d"), .customLong("display")],  help: "Chooses which display to control.")
     var display: String?
 
     func info() throws -> DisplayInfo {
