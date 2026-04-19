@@ -1,0 +1,4 @@
+module DisplayUtilsBridge {
+    header "BridgingHeader.h"
+    export *
+}
