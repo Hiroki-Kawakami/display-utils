@@ -45,6 +45,20 @@ public struct DisplayInfo {
         return activeDisplays[0..<Int(displayCount)].compactMap({ id in DisplayInfo(id: id) })
     }
 
+    public static func find(uuid: UUID) -> DisplayInfo? {
+        for info in onlineDisplays {
+            if info.uuid == uuid { return info }
+        }
+        return nil
+    }
+    public static func find(query: String) -> DisplayInfo? {
+        for info in onlineDisplays {
+            if info.uuid.uuidString == query { return info }
+            if info.name == query { return info }
+        }
+        return nil
+    }
+
     private init?(id: CGDirectDisplayID) {
         guard let info = CoreDisplay_DisplayCreateInfoDictionary(id)?.takeRetainedValue() as NSDictionary? else {
             return nil

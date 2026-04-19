@@ -17,24 +17,20 @@ struct DisplaySelectorOption: ParsableArguments {
     var display: String?
 
     func info() throws -> DisplayInfo {
-        let displays = DisplayInfo.onlineDisplays
-        for display in displays {
-            if display.uuid.uuidString == self.display {
-                return display
-            }
-        }
-        for display in displays {
-            if display.name == self.display {
-                return display
-            }
+        if let query = display, let info = DisplayInfo.find(query: query) {
+            return info
         }
         if let index = Int(self.display ?? "0") {
-            if index >= displays.count {
-                throw CommandLineError(message: "Display index (\(index)) is out of range (0-\(displays.count - 1)).")
+            if index >= DisplayInfo.onlineDisplayCount {
+                throw CommandLineError(message: "Display index (\(index)) is out of range (0-\(DisplayInfo.onlineDisplayCount - 1)).")
             }
-            return displays[index]
+            return DisplayInfo.onlineDisplays[index]
         }
-        throw CommandLineError(message: "Display \"\(self.display ?? "")\" not found.")
+        if let d = display {
+            throw CommandLineError(message: "Display \"\(d)\" not found.")
+        } else {
+            throw CommandLineError(message: "Display not found.")
+        }
     }
 
     func ddc() throws -> DisplayDataChannel {
