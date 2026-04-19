@@ -1,5 +1,24 @@
 import StaticMemberIterable
 
+public enum VCPError: Error, CustomStringConvertible {
+    case unsupportedVcpCode
+    case unknownFeatureReply(rawValue: UInt8)
+
+    static func fromVCPFeatureReplyResultCode(_ rawValue: UInt8) -> VCPError? {
+        switch rawValue {
+        case 0x00: return nil
+        case 0x01: return .unsupportedVcpCode
+        default: return .unknownFeatureReply(rawValue: rawValue)
+        }
+    }
+    public var description: String {
+        switch self {
+        case .unsupportedVcpCode: return "VCPError: Unsupported VCP Code"
+        case .unknownFeatureReply(rawValue: let rawValue): return "VCPError: Unknown Error (\(rawValue)) for VCP Feature Reply"
+        }
+    }
+}
+
 public struct VCPValueEntry: Sendable {
     let value: UInt8
     let description: String
@@ -10,6 +29,21 @@ public enum VCPValueKind: UInt8, Sendable {
     case table = 0x01
     case momentary = 0x02
     case unknown = 0xff
+}
+
+public struct VCPResponse {
+    public let code: UInt8
+    public let kind: VCPValueKind
+    public let max: UInt16
+    public let current: UInt16
+
+    public init(data: [UInt8]) throws {
+        if let err = VCPError.fromVCPFeatureReplyResultCode(data[3]) { throw err }
+        self.code = data[4]
+        self.kind = VCPValueKind(rawValue: data[5]) ?? .unknown
+        self.max = (UInt16(data[6]) << 8) | UInt16(data[7])
+        self.current = (UInt16(data[8]) << 8) | UInt16(data[9])
+    }
 }
 
 @StaticMemberIterable

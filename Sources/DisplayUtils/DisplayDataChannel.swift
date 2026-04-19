@@ -95,14 +95,14 @@ public class DisplayDataChannel {
         }
     }
 
-    func i2cRead(addr: UInt8, size: Int, waitMs: Int = 50) async throws -> Packet {
+    func i2cRead(addr: UInt8, size: Int, waitMs: Int = 10) async throws -> Packet {
         var packet = Packet(addr: addr, data: [UInt8](repeating: 0, count: size))
         try await Task.sleep(nanoseconds: UInt64(waitMs) * 1000 * 1000)
         let err = IOAVServiceReadI2C(avService, i2cChipAddress, UInt32(addr), &packet.data, UInt32(packet.data.count))
         if err != 0 { throw IOError(message: "I2C Read Failed", rawValue: err) }
         return packet
     }
-    func i2cWrite(packet: Packet, waitMs: Int = 50, retry: Int = 2) async throws {
+    func i2cWrite(packet: Packet, waitMs: Int = 10, retry: Int = 2) async throws {
         var err: IOReturn = 0
         for _ in 0..<retry {
             try await Task.sleep(nanoseconds: UInt64(waitMs) * 1000 * 1000)
@@ -126,6 +126,14 @@ public class DisplayDataChannel {
         return String(decoding: buffer, as: UTF8.self)
     }
 
+    public func getVcp(code: UInt8) async throws -> VCPResponse {
+        try await i2cWrite(packet: Packet(addr: 0x51, data: [0x01, code], addChecksum: true))
+        let readPacket = try await i2cRead(addr: 0x51, size: 12)
+        return try VCPResponse(data: readPacket.data)
+    }
+    public func getVcp(feature: VCPFeature) async throws -> VCPResponse {
+        return try await getVcp(code: feature.code)
+    }
     public func setVcp(code: UInt8, value: UInt16) async throws {
         try await i2cWrite(packet: Packet(addr: 0x51, data: [0x03, code, UInt8(value >> 8), UInt8(value & 0xff)], addChecksum: true))
     }

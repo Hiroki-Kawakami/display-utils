@@ -11,6 +11,7 @@ struct DisplayCommand: AsyncParsableCommand {
         abstract: "Controls display settings over DDC/CI",
         subcommands: [
             Capabilities.self,
+            GetVcp.self,
             SetVcp.self,
         ]
     )
@@ -54,6 +55,21 @@ struct DisplayCommand: AsyncParsableCommand {
                 guard let v = UInt16(argument) else { return nil }
                 value = v
             }
+        }
+    }
+
+    struct GetVcp: AsyncParsableCommand {
+        static let configuration = CommandConfiguration(
+            commandName: "getvcp",
+            abstract: "Get VCP feature value.",
+        )
+        @OptionGroup var display: DisplaySelectorOption
+        @Argument(help: "Feature code or name") var feature: VcpFeatureArgument
+
+        mutating func run() async throws {
+            let ddc = try display.ddc()
+            let response = try await ddc.getVcp(code: feature.code)
+            print("\(response.current)")
         }
     }
 
