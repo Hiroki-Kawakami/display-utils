@@ -4,7 +4,7 @@
 
 import Foundation
 import IOKit
-import DisplayUtilsBridge
+internal import DisplayUtilsBridge
 
 private func IOString(_ proc: (UnsafeMutablePointer<CChar>) -> Void) -> String {
     var buf = [CChar](repeating: 0, count: MemoryLayout<io_string_t>.size)

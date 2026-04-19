@@ -4,7 +4,7 @@
 
 import Foundation
 import CoreGraphics
-import DisplayUtilsBridge
+internal import DisplayUtilsBridge
 
 public struct DisplayError: Error, CustomStringConvertible {
     let message: String
