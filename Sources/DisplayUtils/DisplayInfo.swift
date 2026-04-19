@@ -46,7 +46,7 @@ public struct DisplayInfo {
     }
 
     private init?(id: CGDirectDisplayID) {
-        guard let info = CoreDisplay_DisplayCreateInfoDictionary(id)?.takeUnretainedValue() as NSDictionary? else {
+        guard let info = CoreDisplay_DisplayCreateInfoDictionary(id)?.takeRetainedValue() as NSDictionary? else {
             return nil
         }
         self.id = id
